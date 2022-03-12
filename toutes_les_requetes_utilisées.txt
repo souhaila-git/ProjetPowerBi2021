@@ -1,0 +1,68 @@
+Q1: 
+SELECT 
+    `Annee` as a,`idSpecialite`, COUNT(`idSoutnance`)/(select count(idSoutnance) from soutnances s
+join time t 
+on	s.idDate=t.idDate where annee=a) as "Total de soutenances par annee"
+FROM
+    `soutnances`,
+    `time`
+WHERE
+    time.idDate = soutnances.idDate
+        AND `soutnances`.`idCandidat` IN (SELECT 
+            idCandidat
+        FROM
+            candidats
+        WHERE
+            candidats.typeSoutnance = 'Doctorat')
+GROUP BY `Annee`,`idSpecialite` 
+order by `Annee`
+Q2: 
+SELECT 
+    `Annee`, COUNT(`idSoutnance`) as "Total de soutenances par annee"
+FROM
+    `soutnances`,
+    `time`
+WHERE
+    time.idDate = soutnances.idDate
+        AND `soutnances`.`idCandidat` IN (SELECT 
+            idCandidat
+        FROM
+            candidats
+        WHERE
+            candidats.typeSoutnance = 'Hdr')
+GROUP BY  `Annee` 
+********************************************
+BI1: 
+select annee,count(idSoutnance) as "le nombre de soutenance par année" from soutnances s
+join time t 
+on	s.idDate=t.idDate
+group by Annee
+
+B2: 
+select count( `soutnances`.`idSoutnance`) as 'le nombre de soutenances pendant le semestre dhiver 2014' from `soutnances` where `soutnances`.`idDate` IN (SELECT time.idDate from time where time.Annee=2014 and time.Semestre ="sem4");
+
+BI3:
+select Ens,count(idSoutnance from soutnances s
+join time t 
+on	s.idDate=t.idDate
+join candidatjury c
+on s.idCandidat=c.idCandidat
+where annee=2015
+group by idEns
+
+B4:
+ select idDiscipline,count(idSoutnance) from soutnances s
+join time t 
+on	s.idDate=t.idDate
+join specialités sp on s.idSpecialite=sp.idSpecialite
+where annee=2015
+group by idDiscipline
+
+B5:
+select Ens,juryRole,count(idSoutnance) from soutnances s
+join time t 
+on	s.idDate=t.idDate
+join candidatjury c
+on s.idCandidat=c.idCandidat
+where annee=2016
+group by idEns,juryRole with rollup
